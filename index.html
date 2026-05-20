@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZKTeco Attendance Visualizer</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body>
+
+<div class="container">
+    <header class="header">
+        <div class="header-content">
+            <h1>ZKTeco Attendance Visualizer</h1>
+            <p class="subtitle">This tool is made to better visualize ZKTeco fingerprint and face recognition attendance machine data.</p>
+            <p class="subtitle" style="margin-top: 5px;">Just go to the attendance report, get a CSV export of the transaction data, and upload the CSV file here to visualize it.</p>
+        </div>
+        <div class="header-actions">
+            <button id="themeToggle" class="btn theme-toggle" title="Toggle Dark Mode">🌙</button>
+        </div>
+    </header>
+
+    <div class="card">
+        <div class="upload-section">
+            <input type="file" id="csvFileInput" accept=".csv" />
+            <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.9rem;">No file loaded</span>
+        </div>
+
+        <div class="controls-section" id="controlsSection">
+            <div class="form-group">
+                <label for="userFilter">Filter by User</label>
+                <select id="userFilter">
+                    <option value="ALL">All Users</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="dateFilter">Filter by Date</label>
+                <select id="dateFilter">
+                    <option value="ALL">All Dates</option>
+                </select>
+            </div>
+            
+            <div class="export-group">
+                <button id="exportBtn" class="btn btn-export">Download Excel (CSV)</button>
+                <button id="pdfBtn" class="btn btn-pdf">Save as PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" id="dataTable">
+        <div class="table-container">
+            <table id="attendanceTable">
+                <thead id="tableHead">
+                    <!-- Headers will be injected here via JavaScript -->
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Rows will be injected here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>made with ❤️ by <a href="https://samseen.dev" target="_blank" rel="noopener noreferrer">SamSeen</a> | <a href="https://www.buymeacoffee.com/samseen" target="_blank" rel="noopener noreferrer">☕ Buy Me a Coffee</a></p>
+</footer>
+
+<script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
