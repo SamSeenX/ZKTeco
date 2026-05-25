@@ -1,4 +1,37 @@
 /**
+ * Helper: Converts HH:mm string to total minutes from midnight.
+ */
+function timeToMinutes(timeStr) {
+    if (!timeStr) return null;
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return null;
+    return (hours * 60) + minutes;
+}
+
+/**
+ * Helper: Calculates duration in minutes between two HH:mm strings.
+ * Handles overnight shifts by adding 24 hours if outTime < inTime.
+ */
+function calculateDuration(inTime, outTime) {
+    const inMin = timeToMinutes(inTime);
+    const outMin = timeToMinutes(outTime);
+    if (inMin === null || outMin === null) return 0;
+    
+    let diff = outMin - inMin;
+    if (diff < 0) diff += 1440; // Add 24 hours
+    return diff;
+}
+
+/**
+ * Helper: Formats total minutes back to HH:mm string.
+ */
+function formatMinutes(totalMinutes) {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+}
+
+/**
  * Processes raw CSV text from ZKTeco attendance machine.
  * Groups data by Employee and Date, and identifies Check-In/Check-Out sessions.
  * Supports both Transaction format and Time Card (semicolon-separated) format.
@@ -81,11 +114,19 @@ export function processCSVData(csvText) {
                 sessions.push(currentSession);
             }
 
+            let dailyTotalMinutes = 0;
+            sessions.forEach(s => {
+                if (s.inTime && s.outTime) {
+                    dailyTotalMinutes += calculateDuration(s.inTime, s.outTime);
+                }
+            });
+
             allSessions.push({
                 empId: group.empId,
                 name: group.name,
                 date: group.date,
-                sessions: sessions
+                sessions: sessions,
+                formattedTotal: formatMinutes(dailyTotalMinutes)
             });
         });
     } else {
@@ -113,11 +154,19 @@ export function processCSVData(csvText) {
                 });
             }
 
+            let dailyTotalMinutes = 0;
+            sessions.forEach(s => {
+                if (s.inTime && s.outTime) {
+                    dailyTotalMinutes += calculateDuration(s.inTime, s.outTime);
+                }
+            });
+
             allSessions.push({
                 empId: empId,
                 name: name,
                 date: date,
-                sessions: sessions
+                sessions: sessions,
+                formattedTotal: formatMinutes(dailyTotalMinutes)
             });
         });
     }

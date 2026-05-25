@@ -25,7 +25,7 @@ export function exportToCSV(allSessions) {
     for(let i = 1; i <= currentMaxSessions; i++) {
         csvContent += `,In ${i},Out ${i}`;
     }
-    csvContent += "\n";
+    csvContent += ",Total Hours\n";
 
     filteredSessions.forEach(row => {
         let rowData = `"${row.empId}","${row.name}","${row.date}"`;
@@ -37,6 +37,7 @@ export function exportToCSV(allSessions) {
                 rowData += `,"-","-"`;
             }
         }
+        rowData += `,"${row.formattedTotal}"`;
         csvContent += rowData + "\n";
     });
 

@@ -53,13 +53,13 @@ export function renderTable(allSessions) {
     for (let i = 1; i <= currentMaxSessions; i++) {
         headerRow += `<th>In ${i}</th><th>Out ${i}</th>`;
     }
-    headerRow += '</tr>';
+    headerRow += '<th>Total Hours</th></tr>';
     thead.innerHTML = headerRow;
 
     tbody.innerHTML = '';
 
     if (filteredSessions.length === 0) {
-        const totalCols = 3 + (currentMaxSessions * 2);
+        const totalCols = 4 + (currentMaxSessions * 2);
         tbody.innerHTML = `<tr><td colspan="${totalCols}" class="empty-state">No attendance records found for the selected filters</td></tr>`;
         return;
     }
@@ -97,6 +97,9 @@ export function renderTable(allSessions) {
                 cellsHtml += `<td class="empty-cell">-</td><td class="empty-cell">-</td>`;
             }
         }
+        
+        // Add Total Hours cell
+        cellsHtml += `<td class="time-cell"><strong>${sessionObj.formattedTotal}</strong></td>`;
         
         if (hasWarning) {
             tr.classList.add('row-warning');
