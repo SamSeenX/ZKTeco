@@ -4,8 +4,8 @@ A modular, modern web application to visualize ZKTeco fingerprint and face recog
 
 ## Features
 
-- **CSV Upload**: Process ZKTeco transaction data exports.
-- **Smart Grouping**: Automatically identifies Check-In and Check-Out sessions.
+- **Dynamic CSV Processing**: Automatically handles both traditional "Transaction" formats (one punch per row) and modern "Time Card" formats (semicolon-separated times in a single cell).
+- **Smart Grouping**: Automatically identifies Check-In and Check-Out sessions with robust column mapping (handles varied headers like 'Employee ID' or 'ID').
 - **Filtering**: Filter records by User or Date.
 - **Export**: Download processed data as CSV or save as PDF.
 - **Dark Mode**: Toggle between light and dark themes.
