@@ -56,7 +56,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             populateFilters(allSessions);
             renderTable(allSessions);
-        };
+
+            // Auto-scroll to table
+            const dataTable = document.getElementById('dataTable');
+            if (dataTable) {
+                dataTable.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            };
+
         reader.readAsText(file);
     };
 

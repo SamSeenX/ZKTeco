@@ -1,35 +1,35 @@
 :root {
-    --bg-color: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.8);
-    --text-main: #0f172a;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --warning-bg: #fee2e2;
-    --warning-text: #b91c1c;
-    --row-hover: rgba(241, 245, 249, 0.8);
+    --bg-color: #faf9f6; /* Off-White */
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --text-main: #1b1b1b;
+    --text-muted: #4a4a4a;
+    --border-color: #e0e0e0;
+    --primary: #2e7d32; /* Money Green */
+    --primary-hover: #1b5e20;
+    --warning-bg: #ffebee;
+    --warning-text: #c62828;
+    --row-hover: rgba(46, 125, 50, 0.05);
     --footer-bg: #ffffff;
-    --footer-text: #64748b;
-    --toggle-bg: #f1f5f9;
-    --glass-border: rgba(255, 255, 255, 0.3);
+    --footer-text: #4a4a4a;
+    --toggle-bg: #f1f1f1;
+    --glass-border: rgba(46, 125, 50, 0.1);
 }
 
 [data-theme="dark"] {
-    --bg-color: #020617;
-    --card-bg: rgba(15, 23, 42, 0.8);
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --border-color: #1e293b;
-    --primary: #3b82f6;
-    --primary-hover: #60a5fa;
-    --warning-bg: #450a0a;
-    --warning-text: #f87171;
-    --row-hover: rgba(30, 41, 59, 0.8);
-    --footer-bg: #0f172a;
-    --footer-text: #94a3b8;
-    --toggle-bg: #1e293b;
-    --glass-border: rgba(30, 41, 59, 0.5);
+    --bg-color: #121212; /* Black-Gray */
+    --card-bg: rgba(30, 30, 30, 0.9);
+    --text-main: #f5f5f5;
+    --text-muted: #b0b0b0;
+    --border-color: #333333;
+    --primary: #d4af37; /* Gold */
+    --primary-hover: #b8860b;
+    --warning-bg: #2c1a1a;
+    --warning-text: #ff8a80;
+    --row-hover: rgba(212, 175, 55, 0.05);
+    --footer-bg: #1e1e1e;
+    --footer-text: #b0b0b0;
+    --toggle-bg: #2a2a2a;
+    --glass-border: rgba(212, 175, 55, 0.2);
 }
 
 * {
@@ -48,8 +48,8 @@ body {
     display: flex;
     flex-direction: column;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.05) 0px, transparent 50%);
+        radial-gradient(at 0% 0%, var(--row-hover) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, var(--row-hover) 0px, transparent 50%);
 }
 
 .container {
