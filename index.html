@@ -18,28 +18,31 @@
 <body>
 
 <div class="container">
-    <header class="header">
-        <div class="header-content">
-            <h1>ZKTeco Attendance Visualizer</h1>
-            <p class="subtitle">This tool is made to better visualize ZKTeco fingerprint and face recognition attendance machine data.</p>
-            <p class="subtitle" style="margin-top: 5px;">Just go to the attendance report, get a CSV export of the transaction data, and upload the CSV file here to visualize it.</p>
+    <div class="top-section">
+        <div class="header-container">
+            <header class="header">
+                <div class="header-content">
+                    <h1>ZKTeco Attendance Visualizer</h1>
+                    <p class="subtitle">Better visualization for ZKTeco fingerprint and face recognition attendance machine data.</p>
+                </div>
+                <div class="header-actions">
+                    <button id="themeToggle" class="btn theme-toggle" title="Toggle Dark Mode">🌙</button>
+                </div>
+            </header>
         </div>
-        <div class="header-actions">
-            <button id="themeToggle" class="btn theme-toggle" title="Toggle Dark Mode">🌙</button>
-        </div>
-    </header>
 
-    <div class="card">
-        <div class="upload-section" id="dropZone">
-            <div class="drop-zone-content">
-                <div class="drop-zone-icon">✨</div>
-                <div class="drop-zone-text">Drop your ZKTeco report here</div>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Supports both Transaction and Time Card formats</p>
-                <button class="btn btn-export" style="margin-top: 10px; background: var(--primary);">Browse Files</button>
-                <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
+        <div class="card upload-card">
+            <div class="upload-section" id="dropZone">
+                <div class="drop-zone-content">
+                    <div class="drop-zone-icon">✨</div>
+                    <div class="drop-zone-text">Drop your ZKTeco report here</div>
+                    <button class="btn btn-export" style="margin-top: 10px; background: var(--primary); padding: 8px 16px; font-size: 0.85rem;">Browse Files</button>
+                    <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
+                </div>
+                <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.75rem; margin-top: 10px; font-weight: 500;">No file loaded yet</span>
             </div>
-            <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 20px; font-weight: 500;">No file loaded yet</span>
         </div>
+    </div>
 
         <div class="controls-section" id="controlsSection">
             <div class="form-group">

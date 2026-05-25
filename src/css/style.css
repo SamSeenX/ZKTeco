@@ -59,11 +59,49 @@ body {
     flex: 1;
 }
 
-.header {
-    margin-bottom: 32px;
+.top-section {
     display: flex;
-    justify-content: space-between;
+    gap: 24px;
+    align-items: stretch;
+    margin-bottom: 32px;
+}
+
+.header-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.upload-card {
+    width: 400px;
+    margin-bottom: 0 !important;
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    padding: 24px;
+    height: 100%;
+    justify-content: center;
+}
+
+.drop-zone-icon {
+    font-size: 2rem;
+}
+
+.drop-zone-text {
+    font-size: 1rem;
+}
+
+@media (max-width: 900px) {
+    .top-section {
+        flex-direction: column;
+    }
+    .upload-card {
+        width: 100%;
+    }
 }
 
 h1 {
