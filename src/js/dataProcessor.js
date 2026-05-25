@@ -34,50 +34,85 @@ function formatMinutes(totalMinutes) {
 /**
  * Processes raw CSV text from ZKTeco attendance machine.
  * Groups data by Employee and Date, and identifies Check-In/Check-Out sessions.
- * Supports both Transaction format and Time Card (semicolon-separated) format.
+ * Supports multiple delimiters and formats.
  */
 export function processCSVData(csvText) {
-    const lines = csvText.trim().split('\n');
+    const lines = csvText.trim().split(/\r?\n/);
     if (lines.length < 2) return [];
 
-    const headers = lines[0].split(',').map(h => h.trim().replace(/\r$/, ''));
-    const records = [];
+    // 1. Detect Delimiter
+    const firstLine = lines[0];
+    const delimiters = [',', ';', '\t'];
+    let delimiter = ',';
+    let maxCols = 0;
+    delimiters.forEach(d => {
+        const cols = firstLine.split(d).length;
+        if (cols > maxCols) {
+            maxCols = cols;
+            delimiter = d;
+        }
+    });
 
+    // 2. Parse Headers
+    const rawHeaders = firstLine.split(delimiter).map(h => h.trim().replace(/^["']|["']$/g, ''));
+    
+    // Helper to find column index by flexible name
+    const findIndex = (names) => {
+        return rawHeaders.findIndex(h => names.some(n => h.toLowerCase().includes(n.toLowerCase())));
+    };
+
+    const colIdx = {
+        empId: findIndex(['Employee ID', 'ID', 'Emp ID']),
+        name: findIndex(['First Name', 'Name', 'FirstName']),
+        date: findIndex(['Date']),
+        time: findIndex(['Time']), // This will match 'Time' or 'Times' or 'Punch Time'
+        punchState: findIndex(['Punch State', 'State'])
+    };
+
+    // If 'Time' and 'Times' both exist, we want the one that likely contains the list of times
+    // In some formats 'Times' is a count, 'Time' is the string. 
+    // We'll refine the 'time' index if 'Times' is picked but 'Time' exists.
+    if (rawHeaders.includes('Times') && rawHeaders.includes('Time')) {
+        colIdx.time = rawHeaders.indexOf('Time');
+    }
+
+    const records = [];
     for (let i = 1; i < lines.length; i++) {
         if (!lines[i].trim()) continue;
         
-        const values = lines[i].split(',');
+        const values = lines[i].split(delimiter).map(v => v.trim().replace(/^["']|["']$/g, ''));
         let record = {};
-        headers.forEach((header, index) => {
+        rawHeaders.forEach((header, index) => {
             if (values[index] !== undefined) {
-                record[header] = values[index].trim().replace(/\r$/, '');
+                record[header] = values[index];
             }
         });
-        records.push(record);
+        
+        // Normalize record keys for easier access
+        const normalized = {
+            empId: values[colIdx.empId],
+            name: values[colIdx.name],
+            date: values[colIdx.date],
+            time: values[colIdx.time],
+            punchState: colIdx.punchState !== -1 ? values[colIdx.punchState] : null
+        };
+        records.push(normalized);
     }
 
     let allSessions = [];
-    
-    // Detect if this is the new "Time Card" format or the old "Transaction" format
-    const isTransactionFormat = headers.includes('Punch State');
+    const isTransactionFormat = colIdx.punchState !== -1;
 
     if (isTransactionFormat) {
-        // Process the original transaction format (one punch per row)
+        // ... (Transaction logic)
         const groupedByUserAndDate = {};
-
         records.forEach(rec => {
-            const empId = rec['Employee ID'] || rec['ID'];
-            const name = rec['First Name'] || rec['Name'];
-            const date = rec['Date'];
-            
-            if (!empId || !date) return;
-
-            const key = `${empId}_${date}`;
+            if (!rec.empId || !rec.date) return;
+            const key = `${rec.empId}_${rec.date}`;
             if (!groupedByUserAndDate[key]) {
                 groupedByUserAndDate[key] = {
-                    empId: empId,
-                    name: name,
-                    date: date,
+                    empId: rec.empId,
+                    name: rec.name,
+                    date: rec.date,
                     punches: []
                 };
             }
@@ -85,19 +120,16 @@ export function processCSVData(csvText) {
         });
 
         Object.values(groupedByUserAndDate).forEach(group => {
-            group.punches.sort((a, b) => a['Time'].localeCompare(b['Time']));
-
+            group.punches.sort((a, b) => a.time.localeCompare(b.time));
             let sessions = [];
             let currentSession = null;
 
             group.punches.forEach(punch => {
-                const state = punch['Punch State'];
-                const time = punch['Time'];
+                const state = punch.punchState;
+                const time = punch.time;
 
                 if (state === 'Check In') {
-                    if (currentSession) {
-                        sessions.push(currentSession);
-                    }
+                    if (currentSession) sessions.push(currentSession);
                     currentSession = { inTime: time, outTime: null };
                 } else if (state === 'Check Out') {
                     if (currentSession) {
@@ -109,10 +141,7 @@ export function processCSVData(csvText) {
                     }
                 }
             });
-
-            if (currentSession) {
-                sessions.push(currentSession);
-            }
+            if (currentSession) sessions.push(currentSession);
 
             let dailyTotalMinutes = 0;
             sessions.forEach(s => {
@@ -130,24 +159,17 @@ export function processCSVData(csvText) {
             });
         });
     } else {
-        // Process the new Time Card format where times are combined in a single cell with semicolons
+        // Time Card Format (semicolon separated)
         records.forEach(rec => {
-            const empId = rec['Employee ID'] || rec['ID'];
-            const name = rec['First Name'] || rec['Name'];
-            const date = rec['Date'];
-            const timeStr = rec['Time'] || '';
-            
-            if (!empId || !date) return;
-
+            if (!rec.empId || !rec.date) return;
+            const timeStr = rec.time || '';
             const punches = timeStr.split(';').map(t => t.trim()).filter(t => t);
             punches.sort(); 
 
             let sessions = [];
-            
             for (let i = 0; i < punches.length; i += 2) {
                 const inTimeRaw = punches[i];
                 const outTimeRaw = punches[i + 1];
-                
                 sessions.push({ 
                     inTime: inTimeRaw ? inTimeRaw.substring(0, 5) : null, 
                     outTime: outTimeRaw ? outTimeRaw.substring(0, 5) : null 
@@ -162,16 +184,15 @@ export function processCSVData(csvText) {
             });
 
             allSessions.push({
-                empId: empId,
-                name: name,
-                date: date,
+                empId: rec.empId,
+                name: rec.name,
+                date: rec.date,
                 sessions: sessions,
                 formattedTotal: formatMinutes(dailyTotalMinutes)
             });
         });
     }
 
-    // Sort by date (newest first) then by name
     return allSessions.sort((a, b) => {
         if (a.date !== b.date) return b.date.localeCompare(a.date);
         if (a.name !== b.name) return a.name.localeCompare(b.name);

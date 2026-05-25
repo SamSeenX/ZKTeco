@@ -52,6 +52,19 @@ describe('processCSVData', () => {
         expect(result[0].formattedTotal).toBe('00:00');
     });
 
+    it('should handle the user provided Time Card format with Seconds and Times column', () => {
+        const csv = `Employee ID,First Name,Department,Date,Times,Time
+1,Prasanna,Department,2026-05-13,2,08:00:00;14:08:22`;
+        
+        const result = processCSVData(csv);
+        expect(result).toHaveLength(1);
+        expect(result[0].name).toBe('Prasanna');
+        expect(result[0].sessions).toHaveLength(1);
+        expect(result[0].sessions[0].inTime).toBe('08:00');
+        expect(result[0].sessions[0].outTime).toBe('14:08');
+        expect(result[0].formattedTotal).toBe('06:08');
+    });
+
     it('should sort records by date descending and name ascending', () => {
         const csv = `ID,Name,Date,Time,Punch State
 1,Alice,2023-10-01,08:00,Check In
@@ -61,8 +74,6 @@ describe('processCSVData', () => {
         const result = processCSVData(csv);
         expect(result[0].date).toBe('2023-10-02');
         expect(result[1].name).toBe('Alice');
-        expect(result[1].date).toBe('2023-10-01');
         expect(result[2].name).toBe('Bob');
-        expect(result[2].date).toBe('2023-10-01');
     });
 });

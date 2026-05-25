@@ -32,11 +32,13 @@
     <div class="card">
         <div class="upload-section" id="dropZone">
             <div class="drop-zone-content">
-                <span class="drop-zone-icon">📁</span>
-                <span class="drop-zone-text">Drag & Drop ZKTeco CSV here or click to browse</span>
+                <div class="drop-zone-icon">✨</div>
+                <div class="drop-zone-text">Drop your ZKTeco report here</div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Supports both Transaction and Time Card formats</p>
+                <button class="btn btn-export" style="margin-top: 10px; background: var(--primary);">Browse Files</button>
                 <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
             </div>
-            <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.9rem; width: 100%; text-align: center; margin-top: 10px;">No file loaded</span>
+            <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 20px; font-weight: 500;">No file loaded yet</span>
         </div>
 
         <div class="controls-section" id="controlsSection">
