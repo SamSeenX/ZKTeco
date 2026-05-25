@@ -32,30 +32,60 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
 
     const fileInput = document.getElementById('csvFileInput');
+    const dropZone = document.getElementById('dropZone');
     const userFilter = document.getElementById('userFilter');
     const dateFilter = document.getElementById('dateFilter');
     const exportBtn = document.getElementById('exportBtn');
     const pdfBtn = document.getElementById('pdfBtn');
     const themeToggle = document.getElementById('themeToggle');
 
+    const handleFile = (file) => {
+        if (!file || !file.name.endsWith('.csv')) {
+            alert('Please upload a valid CSV file.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const csvData = event.target.result;
+            allSessions = processCSVData(csvData);
+            
+            document.getElementById('uploadStatus').textContent = `Loaded ${file.name}`;
+            document.getElementById('controlsSection').style.display = 'flex';
+            document.getElementById('dataTable').style.display = 'block';
+            
+            populateFilters(allSessions);
+            renderTable(allSessions);
+        };
+        reader.readAsText(file);
+    };
+
+    if (dropZone) {
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        ['dragleave', 'dragend'].forEach(type => {
+            dropZone.addEventListener(type, () => {
+                dropZone.classList.remove('dragover');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            handleFile(file);
+        });
+    }
+
     if (fileInput) {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const csvData = event.target.result;
-                allSessions = processCSVData(csvData);
-                
-                document.getElementById('uploadStatus').textContent = `Loaded ${file.name}`;
-                document.getElementById('controlsSection').style.display = 'flex';
-                document.getElementById('dataTable').style.display = 'block';
-                
-                populateFilters(allSessions);
-                renderTable(allSessions);
-            };
-            reader.readAsText(file);
+            handleFile(file);
         });
     }
 

@@ -30,9 +30,13 @@
     </header>
 
     <div class="card">
-        <div class="upload-section">
-            <input type="file" id="csvFileInput" accept=".csv" />
-            <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.9rem;">No file loaded</span>
+        <div class="upload-section" id="dropZone">
+            <div class="drop-zone-content">
+                <span class="drop-zone-icon">📁</span>
+                <span class="drop-zone-text">Drag & Drop ZKTeco CSV here or click to browse</span>
+                <input type="file" id="csvFileInput" accept=".csv" style="display: none;" />
+            </div>
+            <span id="uploadStatus" style="color: var(--text-muted); font-size: 0.9rem; width: 100%; text-align: center; margin-top: 10px;">No file loaded</span>
         </div>
 
         <div class="controls-section" id="controlsSection">
